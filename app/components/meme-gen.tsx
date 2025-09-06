@@ -296,6 +296,7 @@ const App: React.FC = () => {
     bottomFontColor,
     topTextY,
     bottomTextY,
+    drawMeme,
   ]);
 
   return (

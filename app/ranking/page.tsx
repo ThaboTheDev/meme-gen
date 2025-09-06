@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { redis } from "../../lib/redis";
 import VotingButtons from "./VotingButtons";
 
@@ -29,7 +30,13 @@ export default async function RankingPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {memes.map((meme) => (
           <div key={String(meme.id)} className="border rounded-lg p-4">
-            <img src={String(meme.imageUrl ?? "")} alt="Meme" className="w-full rounded-lg" />
+            <Image
+              src={String(meme.imageUrl ?? "")}
+              alt="Meme"
+              width={400}
+              height={400}
+              className="w-full rounded-lg"
+            />
             <div className="flex justify-between items-center mt-2">
               <span>Votes: {String(meme.votes ?? 0)}</span>
               <VotingButtons memeId={meme.id} />

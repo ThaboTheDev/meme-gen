@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     await redis.zadd("memes:ranking", { score: newVotes, member: memeKey });
 
     return NextResponse.json({ success: true, votes: newVotes });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

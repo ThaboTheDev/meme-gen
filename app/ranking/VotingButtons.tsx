@@ -14,7 +14,7 @@ export default function VotingButtons({ memeId }: VotingButtonsProps) {
         body: JSON.stringify({ id: memeId, vote }),
       });
       alert(vote === 1 ? "You liked this meme!" : "You disliked this meme.");
-    } catch (error) {
+    } catch {
       alert("Failed to submit vote.");
     }
   };
