@@ -3,6 +3,7 @@ import "@coinbase/onchainkit/styles.css";
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
+import Link from "next/link";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -43,6 +44,22 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-background">
+        <header className="flex justify-between items-center mb-3 h-11 px-4">
+          <div>
+            <div className="flex items-center space-x-4">
+              <Link href="/">
+                <span className="text-inherit hover:text-blue-500 transition-colors">
+                  Home
+                </span>
+              </Link>
+              <Link href="/ranking">
+                <span className="text-inherit hover:text-blue-500 transition-colors">
+                  Ranking
+                </span>
+              </Link>
+            </div>
+          </div>
+        </header>
         <Providers>{children}</Providers>
       </body>
     </html>

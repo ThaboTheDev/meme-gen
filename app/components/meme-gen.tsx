@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useState, ChangeEvent } from 'react';
-import axios from 'axios';
+import React, { useRef, useEffect, useState, ChangeEvent } from "react";
+import axios from "axios";
 
 // Interface for Pinata API response
 interface PinataResponse {
@@ -16,28 +16,28 @@ interface NeynarCastResponse {
 const App: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
-  const [topText, setTopText] = useState<string>('');
-  const [bottomText, setBottomText] = useState<string>('');
+  const [topText, setTopText] = useState<string>("");
+  const [bottomText, setBottomText] = useState<string>("");
   const [topFontSize, setTopFontSize] = useState<number>(40);
   const [bottomFontSize, setBottomFontSize] = useState<number>(40);
-  const [topFontColor, setTopFontColor] = useState<string>('white');
-  const [bottomFontColor, setBottomFontColor] = useState<string>('white');
+  const [topFontColor, setTopFontColor] = useState<string>("white");
+  const [bottomFontColor, setBottomFontColor] = useState<string>("white");
   const [topTextY, setTopTextY] = useState<number>(0);
   const [bottomTextY, setBottomTextY] = useState<number>(0);
-  const [signerUuid, setSignerUuid] = useState<string>('');
-  const [error, setError] = useState<string>('');
+  const [signerUuid, setSignerUuid] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
   const PINATA_JWT =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJjMzNjODM1NC0wNjUxLTRlNjEtOGRiOC1iZjg0ODNmYzExZTMiLCJlbWFpbCI6InRoYWJvdGhhbmRhemFuaW1saWxvQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiI3MzhlOWVlYzNlOTMwMmEzZTZkNCIsInNjb3BlZEtleVNlY3JldCI6ImVmNDk2MDQwZWQ4Y2VmMzlkZTljMjg0MTI0ZWU5ZTZlMDc1ZTM4NTc2NjA5MGNlMmE0MTFjNWMyODg3ZWJmNmYiLCJleHAiOjE3ODg2OTYwOTV9.wlH_6GUtCgj0OvwzTYJpAN-oDqZCo_Ai98DknqCdYcY"; // Replace with your Pinata JWT
-  const NEYNAR_API_KEY = 'B3D8EBC5-6BE0-49FC-ADFF-098C7DEE8171'; // Replace with your Neynar API key
+  const NEYNAR_API_KEY = "B3D8EBC5-6BE0-49FC-ADFF-098C7DEE8171"; // Replace with your Neynar API key
 
   const drawMeme = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = "#fff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     let imageX = 0,
@@ -57,32 +57,44 @@ const App: React.FC = () => {
       imageY = (canvas.height - imageHeight) / 2;
       ctx.drawImage(image, imageX, imageY, imageWidth, imageHeight);
     } else {
-      ctx.fillStyle = '#e5e7eb';
+      ctx.fillStyle = "#e5e7eb";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#6b7280';
-      ctx.font = '24px Arial, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('Upload an image to start', canvas.width / 2, canvas.height / 2);
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "24px Arial, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(
+        "Upload an image to start",
+        canvas.width / 2,
+        canvas.height / 2,
+      );
     }
 
-    const wrapText = (text: string, x: number, y: number, maxWidth: number, lineHeight: number, fontSize: number, color: string) => {
+    const wrapText = (
+      text: string,
+      x: number,
+      y: number,
+      maxWidth: number,
+      lineHeight: number,
+      fontSize: number,
+      color: string,
+    ) => {
       ctx.font = `${fontSize}px Impact, sans-serif`;
       ctx.fillStyle = color;
-      ctx.strokeStyle = 'black';
+      ctx.strokeStyle = "black";
       ctx.lineWidth = fontSize / 15;
-      ctx.textAlign = 'center';
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+      ctx.textAlign = "center";
+      ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
       ctx.shadowBlur = 4;
 
-      const words = text.split(' ');
-      let line = '';
+      const words = text.split(" ");
+      let line = "";
       const lines: string[] = [];
       for (let i = 0; i < words.length; i++) {
-        const testLine = line + words[i] + ' ';
+        const testLine = line + words[i] + " ";
         const metrics = ctx.measureText(testLine);
         if (metrics.width > maxWidth && i > 0) {
           lines.push(line);
-          line = words[i] + ' ';
+          line = words[i] + " ";
         } else {
           line = testLine;
         }
@@ -114,7 +126,7 @@ const App: React.FC = () => {
           maxTextWidth,
           lineHeight,
           topFontSize,
-          topFontColor
+          topFontColor,
         );
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
@@ -132,7 +144,7 @@ const App: React.FC = () => {
           maxTextWidth,
           lineHeight,
           bottomFontSize,
-          bottomFontColor
+          bottomFontColor,
         );
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
@@ -157,18 +169,18 @@ const App: React.FC = () => {
   const saveMeme = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const link = document.createElement('a');
-    link.download = 'meme.png';
-    link.href = canvas.toDataURL('image/png');
+    const link = document.createElement("a");
+    link.download = "meme.png";
+    link.href = canvas.toDataURL("image/png");
     link.click();
   };
 
   const shareOnX = () => {
-    const tweetText = encodeURIComponent('Check out my meme! #MemeGenerator');
+    const tweetText = encodeURIComponent("Check out my meme! #MemeGenerator");
     const deepLink = `x://post?message=${tweetText}`;
     const webFallback = `https://x.com/intent/tweet?text=${tweetText}`;
 
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = deepLink;
     link.onclick = () => {
       setTimeout(() => {
@@ -180,59 +192,111 @@ const App: React.FC = () => {
 
   const shareOnFarcaster = async () => {
     if (!canvasRef.current) {
-      setError('No meme to share. Create a meme first.');
+      setError("No meme to share. Create a meme first.");
       return;
     }
     if (!signerUuid) {
-      setError('Please enter a valid Farcaster signer UUID.');
+      setError("Please enter a valid Farcaster signer UUID.");
       return;
     }
 
     try {
-      setError('');
+      setError("");
       // Convert canvas to blob for Pinata upload
       const blob = await new Promise<Blob>((resolve) => {
-        canvasRef.current!.toBlob((blob) => resolve(blob!), 'image/png');
+        canvasRef.current!.toBlob((blob) => resolve(blob!), "image/png");
       });
 
       // Upload to Pinata
       const formData = new FormData();
-      formData.append('file', blob, 'meme.png');
-      const pinataResponse = await axios.post<PinataResponse>('https://api.pinata.cloud/pinning/pinFileToIPFS', formData, {
-        headers: {
-          Authorization: `Bearer ${PINATA_JWT}`,
-          'Content-Type': 'multipart/form-data',
+      formData.append("file", blob, "meme.png");
+      const pinataResponse = await axios.post<PinataResponse>(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${PINATA_JWT}`,
+            "Content-Type": "multipart/form-data",
+          },
         },
-      });
+      );
 
       const ipfsUrl = `https://gateway.pinata.cloud/ipfs/${pinataResponse.data.IpfsHash}`;
 
       // Post to Farcaster via Neynar API
       await axios.post<NeynarCastResponse>(
-        'https://api.neynar.com/v2/farcaster/cast',
+        "https://api.neynar.com/v2/farcaster/cast",
         {
           signer_uuid: signerUuid,
-          text: 'Check out my meme! #MemeGenerator',
+          text: "Check out my meme! #MemeGenerator",
           embeds: [{ url: ipfsUrl }],
         },
         {
           headers: {
             api_key: NEYNAR_API_KEY,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-        }
+        },
       );
 
-      alert('Meme posted to Farcaster successfully!');
+      alert("Meme posted to Farcaster successfully!");
     } catch (err) {
-      setError('Failed to post to Farcaster. Check your signer UUID or API keys.');
+      setError(
+        "Failed to post to Farcaster. Check your signer UUID or API keys.",
+      );
+      console.error(err);
+    }
+  };
+
+  const addToRanking = async () => {
+    if (!canvasRef.current) {
+      setError("No meme to add. Create a meme first.");
+      return;
+    }
+
+    try {
+      setError("");
+      const blob = await new Promise<Blob>((resolve) => {
+        canvasRef.current!.toBlob((blob) => resolve(blob!), "image/png");
+      });
+
+      const formData = new FormData();
+      formData.append("file", blob, "meme.png");
+      const pinataResponse = await axios.post<PinataResponse>(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${PINATA_JWT}`,
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+
+      const imageUrl = `https://gateway.pinata.cloud/ipfs/${pinataResponse.data.IpfsHash}`;
+
+      await axios.post("/api/ranking", { imageUrl });
+
+      alert("Meme added to ranking successfully!");
+    } catch (err) {
+      setError("Failed to add meme to ranking.");
       console.error(err);
     }
   };
 
   useEffect(() => {
     drawMeme();
-  }, [image, topText, bottomText, topFontSize, bottomFontSize, topFontColor, bottomFontColor, topTextY, bottomTextY]);
+  }, [
+    image,
+    topText,
+    bottomText,
+    topFontSize,
+    bottomFontSize,
+    topFontColor,
+    bottomFontColor,
+    topTextY,
+    bottomTextY,
+  ]);
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gradient-to-b from-gray-800 to-gray-900 p-4 sm:p-6">
@@ -251,7 +315,10 @@ const App: React.FC = () => {
         )}
         <div className="space-y-4">
           <div>
-            <label htmlFor="imageInput" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="imageInput"
+              className="block text-sm font-medium mb-1"
+            >
               Upload Image
             </label>
             <input
@@ -263,7 +330,10 @@ const App: React.FC = () => {
             />
           </div>
           <div>
-            <label htmlFor="signerUuid" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="signerUuid"
+              className="block text-sm font-medium mb-1"
+            >
               Farcaster Signer UUID
             </label>
             <input
@@ -290,7 +360,10 @@ const App: React.FC = () => {
             />
           </div>
           <div>
-            <label htmlFor="topFontSize" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="topFontSize"
+              className="block text-sm font-medium mb-1"
+            >
               Top Text Font Size
             </label>
             <select
@@ -306,7 +379,10 @@ const App: React.FC = () => {
             </select>
           </div>
           <div>
-            <label htmlFor="topFontColor" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="topFontColor"
+              className="block text-sm font-medium mb-1"
+            >
               Top Text Color
             </label>
             <select
@@ -322,7 +398,10 @@ const App: React.FC = () => {
             </select>
           </div>
           <div>
-            <label htmlFor="topTextY" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="topTextY"
+              className="block text-sm font-medium mb-1"
+            >
               Top Text Position (Y)
             </label>
             <input
@@ -336,7 +415,10 @@ const App: React.FC = () => {
             />
           </div>
           <div>
-            <label htmlFor="bottomText" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="bottomText"
+              className="block text-sm font-medium mb-1"
+            >
               Bottom Text
             </label>
             <input
@@ -350,7 +432,10 @@ const App: React.FC = () => {
             />
           </div>
           <div>
-            <label htmlFor="bottomFontSize" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="bottomFontSize"
+              className="block text-sm font-medium mb-1"
+            >
               Bottom Text Font Size
             </label>
             <select
@@ -366,7 +451,10 @@ const App: React.FC = () => {
             </select>
           </div>
           <div>
-            <label htmlFor="bottomFontColor" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="bottomFontColor"
+              className="block text-sm font-medium mb-1"
+            >
               Bottom Text Color
             </label>
             <select
@@ -382,7 +470,10 @@ const App: React.FC = () => {
             </select>
           </div>
           <div>
-            <label htmlFor="bottomTextY" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="bottomTextY"
+              className="block text-sm font-medium mb-1"
+            >
               Bottom Text Position (Y)
             </label>
             <input
@@ -413,6 +504,12 @@ const App: React.FC = () => {
               className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 transition duration-200 transform hover:scale-105"
             >
               Share on Farcaster
+            </button>
+            <button
+              onClick={addToRanking}
+              className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 focus:ring-2 focus:ring-yellow-500 transition duration-200 transform hover:scale-105"
+            >
+              Add to Rankings
             </button>
           </div>
         </div>
